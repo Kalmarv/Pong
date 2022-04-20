@@ -36,6 +36,8 @@ function mouseClicked() {
   if (gameState == 2) {
     player1Score = "0";
     player2Score = "0";
+    players[0].y = h / 2;
+    players[1].y = h / 2;
     gameState = 1;
   }
 }
