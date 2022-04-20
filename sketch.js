@@ -11,7 +11,7 @@ let settings = {
   paddleWidth: 20,
   paddleHeight: 150,
   paddleSpeed: 10,
-  winningScore: 2,
+  winningScore: 10,
 };
 
 function setup() {
