@@ -56,7 +56,7 @@ function draw() {
     text("Player 2 use Up and Down", w / 2, h * 0.55);
     text(
       `${settings.winningScore} points to win, click to begin`,
-      w / 2,
+      w * 0.5,
       h * 0.65
     );
   } else if (gameState == 1) {
