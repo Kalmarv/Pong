@@ -2,6 +2,7 @@ let pongBall;
 let players = [];
 let player1Score = "0";
 let player2Score = "0";
+let gameState = 0;
 
 let settings = {
   ballSpeed: 10,
@@ -10,6 +11,7 @@ let settings = {
   paddleWidth: 20,
   paddleHeight: 150,
   paddleSpeed: 10,
+  winningScore: 2,
 };
 
 function setup() {
@@ -22,30 +24,74 @@ function setup() {
   players[1] = new Paddle(1);
 
   textFont("monospace", 18);
-  textAlign(CENTER, CENTER);
-  textSize(75);
+  textAlign(CENTER);
 }
 
-function draw() {
-  background(0);
+function mouseClicked() {
+  if (gameState == 0) {
+    gameState = 1;
+    pongBall.spawn();
+  }
 
-  text(player1Score, w * 0.25, h * 0.25);
-  text(player2Score, w * 0.75, h * 0.25);
-
-  if (frameCount <= 1) pongBall.spawn();
-
-  controller(pongBall, players);
-
-  pongBall.update();
-  pongBall.show();
-
-  for (let i = 0; i < players.length; i++) {
-    players[i].update();
-    players[i].show();
+  if (gameState == 2) {
+    player1Score = "0";
+    player2Score = "0";
+    gameState = 1;
   }
 }
 
-function controller(_ball, _players) {
+function draw() {
+  background(0, 100);
+  fill(255);
+  //stroke(255);
+
+  gameStateController();
+
+  if (gameState == 0) {
+    textSize(32);
+    text("Pong", w / 2, h * 0.35);
+    text("Player 1 use W and S", w / 2, h * 0.45);
+    text("Player 2 use Up and Down", w / 2, h * 0.55);
+    text(
+      `${settings.winningScore} points to win, click to begin`,
+      w / 2,
+      h * 0.65
+    );
+  } else if (gameState == 1) {
+    textSize(75);
+    text(player1Score, w * 0.25, h * 0.25);
+    text(player2Score, w * 0.75, h * 0.25);
+
+    controller(pongBall, players);
+
+    pongBall.update();
+    pongBall.show();
+
+    for (let i = 0; i < players.length; i++) {
+      players[i].update();
+      players[i].show();
+    }
+  } else if (gameState == 2) {
+    textSize(50);
+    parseInt(player1Score) > parseInt(player2Score)
+      ? text("Player 1 wins!", w / 2, h * 0.33)
+      : text("Player 2 wins!", w / 2, h * 0.33);
+    text("Click to play again", w / 2, h * 0.66);
+  }
+}
+
+const gameStateController = () => {
+  if (gameState == 1) {
+    if (
+      parseInt(player1Score) == settings.winningScore ||
+      parseInt(player2Score) == settings.winningScore
+    ) {
+      gameState = 2;
+    }
+  }
+};
+
+const controller = (_ball, _players) => {
   if (
     _ball.pos.x > settings.paddleMargin &&
     _ball.pos.x <= 0 + settings.paddleMargin + settings.paddleWidth
@@ -69,7 +115,7 @@ function controller(_ball, _players) {
       _ball.vel.x *= -1;
     }
   }
-}
+};
 
 class Ball {
   constructor(_x, _y) {
@@ -102,8 +148,6 @@ class Ball {
   }
 
   show() {
-    fill(255);
-    stroke(255);
     circle(this.pos.x, this.pos.y, settings.ballSize);
   }
 }
